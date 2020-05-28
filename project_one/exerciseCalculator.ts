@@ -23,7 +23,7 @@ const calculateExercises = (exercises: Array<number>, targetDaily: number): Resu
         return acc
     }, 0)
 
-    const averageDailyHours = exercises.reduce((acc, cur) => acc+cur, 0)/days
+    const averageDailyHours = exercises.reduce((acc, cur) => acc + cur, 0) / days
 
     let rating: rating
     let success: boolean = false
@@ -48,4 +48,35 @@ const calculateExercises = (exercises: Array<number>, targetDaily: number): Resu
     }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 1))
+interface ExerciseArguments {
+    exercises: Array<number>,
+    target: number
+}
+
+const parseExerciseArguments = (args: Array<string>): ExerciseArguments => {
+    if (args.length < 4) throw new Error('Not enough arguments');
+
+    const target = Number(args[2])
+
+    if (isNaN(target)) {
+        throw new Error('Target value was not a number!');
+    }
+
+    const exercises = args.slice(3).map(ex => Number(ex))
+
+    exercises.forEach(ex => {
+        if (isNaN(ex)) throw new Error('Provided values were not numbers!')
+    })
+
+    return {
+        target,
+        exercises
+    }
+}
+
+try {
+    const { exercises, target } = parseExerciseArguments(process.argv)
+    console.log(calculateExercises(exercises, target))
+} catch (e) {
+    console.log(e.message)
+}
