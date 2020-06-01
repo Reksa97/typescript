@@ -1,37 +1,37 @@
-export const calculateBmi = (heightInCm: number, weight: number) => {
-    const heightInMeters = heightInCm / 100
-    const BMI: number = weight / (heightInMeters * heightInMeters)
+export const calculateBmi = (heightInCm: number, weight: number): string => {
+    const heightInMeters = heightInCm / 100;
+    const BMI: number = weight / (heightInMeters * heightInMeters);
 
     if (BMI < 15) {
-        return 'Very severely underweight'
+        return 'Very severely underweight';
     }
 
     if (BMI < 16) {
-        return 'Severely underweight'
+        return 'Severely underweight';
     }
 
     if (BMI < 18.5) {
-        return 'Underweight'
+        return 'Underweight';
     }
 
     if (BMI < 25) {
-        return 'Normal (healthy weight)'
+        return 'Normal (healthy weight)';
     }
 
     if (BMI < 30) {
-        return 'Overweight'
+        return 'Overweight';
     }
 
     if (BMI < 35) {
-        return 'Obese Class I (Moderately obese)'
+        return 'Obese Class I (Moderately obese)';
     }
 
     if (BMI < 40) {
-        return 'Obese Class II (Severely obese)'
+        return 'Obese Class II (Severely obese)';
     }
 
-    return 'Obese Class III (Very severely obese)'
-}
+    return 'Obese Class III (Very severely obese)';
+};
 
 interface HeightAndWeight {
     height: number,
@@ -46,15 +46,16 @@ const parseBmiArguments = (args: Array<string>): HeightAndWeight => {
         return {
             height: Number(args[2]),
             weight: Number(args[3])
-        }
+        };
     } else {
         throw new Error('Provided values were not numbers!');
     }
-}
+};
 
 try {
-    const { height, weight } = parseBmiArguments(process.argv)
-    console.log(calculateBmi(height, weight))
+    const { height, weight } = parseBmiArguments(process.argv);
+    console.log(calculateBmi(height, weight));
 } catch (e) {
-    console.log(e.message)
+    const message = (e as Error).message;
+    console.log(message);
 }
