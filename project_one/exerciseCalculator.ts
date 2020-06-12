@@ -16,7 +16,7 @@ const ratingDescriptions = {
     3: 'you did it!'
 };
 
-const calculateExercises = (exercises: Array<number>, targetDaily: number): Result => {
+export const calculateExercises = (exercises: Array<number>, targetDaily: number): Result => {
     const days: number = exercises.length;
     const daysTrained: number = exercises.reduce((acc, cur) => {
         if (cur > 0) acc++;
@@ -48,8 +48,8 @@ const calculateExercises = (exercises: Array<number>, targetDaily: number): Resu
     };
 };
 
-interface ExerciseArguments {
-    exercises: Array<number>,
+export interface ExerciseArguments {
+    daily_exercises: Array<number>,
     target: number
 }
 
@@ -62,21 +62,21 @@ const parseExerciseArguments = (args: Array<string>): ExerciseArguments => {
         throw new Error('Target value was not a number!');
     }
 
-    const exercises = args.slice(3).map(ex => Number(ex));
+    const daily_exercises = args.slice(3).map(ex => Number(ex));
 
-    exercises.forEach(ex => {
+    daily_exercises.forEach(ex => {
         if (isNaN(ex)) throw new Error('Provided values were not numbers!');
     });
 
     return {
         target,
-        exercises
+        daily_exercises
     };
 };
 
 try {
-    const { exercises, target } = parseExerciseArguments(process.argv);
-    console.log(calculateExercises(exercises, target));
+    const { daily_exercises, target } = parseExerciseArguments(process.argv);
+    console.log(calculateExercises(daily_exercises, target));
 } catch (e) {
     const message = (e as Error).message;
     console.log(message);
