@@ -11,7 +11,8 @@ const getEntries = () : PatientPublicData[] => {
   }));
 };
 
-const addEntry = () => {
+const addEntry = (patientEntry: Patient) => {
+    console.log('adding', patientEntry);
   return null;
 };
 

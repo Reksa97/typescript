@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import diagnoseService from './services/diagnoseService';
 import patientService from './services/patientService';
+import { toNewPatientEntry } from './utils';
 
 const app = express();
 
@@ -22,6 +23,18 @@ app.get('/api/diagnoses', (_req, res) => {
 
 app.get('/api/patients', (_req, res) => {
   res.json(patientService.getEntries());
+});
+
+app.post('/api/patients', (req, res) => {
+  try {
+    const newPatientEntry = toNewPatientEntry(req.body);
+      
+    const addedEntry = patientService.addEntry(newPatientEntry);
+    res.json(addedEntry);
+  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    res.status(400).send(e.message); 
+  }
 });
   
 app.listen(PORT, () => {
