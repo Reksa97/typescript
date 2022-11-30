@@ -1,6 +1,29 @@
+const Header = ({ courseName }: { courseName: string }) => (
+  <h1>{courseName}</h1>
+);
+
+interface CoursePart {
+  name: string;
+  exerciseCount: number;
+}
+
+const Content = ({ courseParts }: { courseParts: CoursePart[] }) => (
+  <>
+    {courseParts.map((p) => (
+      <p key={p.name}>
+        {p.name} {p.exerciseCount}
+      </p>
+    ))}
+  </>
+);
+
+const Total = ({ numberOfExercises }: { numberOfExercises: number }) => (
+  <p>Number of exercises {numberOfExercises}</p>
+);
+
 const App = () => {
   const courseName = "Half Stack application development";
-  const courseParts = [
+  const courseParts: CoursePart[] = [
     {
       name: "Fundamentals",
       exerciseCount: 10,
@@ -17,20 +40,14 @@ const App = () => {
 
   return (
     <div>
-      <h1>{courseName}</h1>
-      <p>
-        {courseParts[0].name} {courseParts[0].exerciseCount}
-      </p>
-      <p>
-        {courseParts[1].name} {courseParts[1].exerciseCount}
-      </p>
-      <p>
-        {courseParts[2].name} {courseParts[2].exerciseCount}
-      </p>
-      <p>
-        Number of exercises{" "}
-        {courseParts.reduce((carry, part) => carry + part.exerciseCount, 0)}
-      </p>
+      <Header courseName={courseName} />
+      <Content courseParts={courseParts} />
+      <Total
+        numberOfExercises={courseParts.reduce(
+          (carry, part) => carry + part.exerciseCount,
+          0
+        )}
+      />
     </div>
   );
 };
