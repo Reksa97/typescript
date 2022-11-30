@@ -1,0 +1,3 @@
+[submodule "patientor/patientor"]
+	path = patientor/patientor
+	url = git@github.com:fullstack-hy2020/patientor.git

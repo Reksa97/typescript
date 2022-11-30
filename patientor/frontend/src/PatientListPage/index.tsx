@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Container, Table, Button } from "semantic-ui-react";
+import { Box, Table, Button, TableHead, Typography } from "@material-ui/core";
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
@@ -8,12 +8,15 @@ import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 import HealthRatingBar from "../components/HealthRatingBar";
 import { useStateValue } from "../state";
+import { TableCell } from "@material-ui/core";
+import { TableRow } from "@material-ui/core";
+import { TableBody } from "@material-ui/core";
 
-const PatientListPage: React.FC = () => {
+const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string | undefined>();
+  const [error, setError] = React.useState<string>();
 
   const openModal = (): void => setModalOpen(true);
 
@@ -30,38 +33,45 @@ const PatientListPage: React.FC = () => {
       );
       dispatch({ type: "ADD_PATIENT", payload: newPatient });
       closeModal();
-    } catch (e) {
-      console.error(e.response.data);
-      setError(e.response.data.error);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
     }
   };
 
   return (
     <div className="App">
-      <Container textAlign="center">
-        <h3>Patient list</h3>
-      </Container>
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Gender</Table.HeaderCell>
-            <Table.HeaderCell>Occupation</Table.HeaderCell>
-            <Table.HeaderCell>Health Rating</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
+      <Box>
+        <Typography align="center" variant="h6">
+          Patient list
+        </Typography>
+      </Box>
+      <Table style={{ marginBottom: "1em" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Gender</TableCell>
+            <TableCell>Occupation</TableCell>
+            <TableCell>Health Rating</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {Object.values(patients).map((patient: Patient) => (
-            <Table.Row key={patient.id}>
-              <Table.Cell>{patient.name}</Table.Cell>
-              <Table.Cell>{patient.gender}</Table.Cell>
-              <Table.Cell>{patient.occupation}</Table.Cell>
-              <Table.Cell>
+            <TableRow key={patient.id}>
+              <TableCell>{patient.name}</TableCell>
+              <TableCell>{patient.gender}</TableCell>
+              <TableCell>{patient.occupation}</TableCell>
+              <TableCell>
                 <HealthRatingBar showText={false} rating={1} />
-              </Table.Cell>
-            </Table.Row>
+              </TableCell>
+            </TableRow>
           ))}
-        </Table.Body>
+        </TableBody>
       </Table>
       <AddPatientModal
         modalOpen={modalOpen}
@@ -69,7 +79,9 @@ const PatientListPage: React.FC = () => {
         error={error}
         onClose={closeModal}
       />
-      <Button onClick={() => openModal()}>Add New Patient</Button>
+      <Button variant="contained" onClick={() => openModal()}>
+        Add New Patient
+      </Button>
     </div>
   );
 };

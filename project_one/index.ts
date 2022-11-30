@@ -1,7 +1,6 @@
 import express from 'express';
 import { calculateBmi } from './bmiCalculator';
 import { calculateExercises, ExerciseArguments } from './exerciseCalculator';
-import { isArray } from 'util';
 const app = express();
 
 app.use(express.json());
@@ -34,7 +33,7 @@ app.post('/exercises', (req, res) => {
         res.status(400).json({ error: "parameters missing"});
     }
 
-    if (!isArray(daily_exercises)) res.status(400).json({ error: "malformatted parameters" });
+    if (!Array.isArray(daily_exercises)) res.status(400).json({ error: "malformatted parameters" });
 
     daily_exercises.forEach(ex => {
         if (isNaN(Number(ex))) res.status(400).json({ error: "malformatted parameters" });

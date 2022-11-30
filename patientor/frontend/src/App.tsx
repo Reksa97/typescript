@@ -1,18 +1,19 @@
 import React from "react";
 import axios from "axios";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import { Button, Divider, Header, Container } from "semantic-ui-react";
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { Button, Divider, Container } from "@material-ui/core";
 
 import { apiBaseUrl } from "./constants";
 import { useStateValue } from "./state";
 import { Patient } from "./types";
 
 import PatientListPage from "./PatientListPage";
+import { Typography } from "@material-ui/core";
 
-const App: React.FC = () => {
+const App = () => {
   const [, dispatch] = useStateValue();
   React.useEffect(() => {
-    axios.get<void>(`${apiBaseUrl}/ping`);
+    void axios.get<void>(`${apiBaseUrl}/ping`);
 
     const fetchPatientList = async () => {
       try {
@@ -24,21 +25,23 @@ const App: React.FC = () => {
         console.error(e);
       }
     };
-    fetchPatientList();
+    void fetchPatientList();
   }, [dispatch]);
 
   return (
     <div className="App">
       <Router>
         <Container>
-          <Header as="h1">Patientor</Header>
-          <Button as={Link} to="/" primary>
+          <Typography variant="h3" style={{ marginBottom: "0.5em" }}>
+            Patientor
+          </Typography>
+          <Button component={Link} to="/" variant="contained" color="primary">
             Home
           </Button>
           <Divider hidden />
-          <Switch>
-            <Route path="/" render={() => <PatientListPage />} />
-          </Switch>
+          <Routes>
+            <Route path="/" element={<PatientListPage />} />
+          </Routes>
         </Container>
       </Router>
     </div>
