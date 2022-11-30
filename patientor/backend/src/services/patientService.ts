@@ -1,19 +1,23 @@
 import patientData from '../../data/patients.json';
-import { PatientPublicData } from '../types';
+import { Gender, Patient, PatientPublicData } from '../types';
+import { isGender } from '../utils';
 
 const getEntries = () : PatientPublicData[] => {
-  return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+  return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => {
+    const parsedGender = isGender(gender) ? gender as Gender : Gender.Other;
+    return {
       id,
       name,
       dateOfBirth,
-      gender,
+      gender: parsedGender,
       occupation
-  }));
+    };
+  });
 };
 
-const addEntry = (patientEntry: Patient) => {
-    console.log('adding', patientEntry);
-  return null;
+const addEntry = (patientEntry: Patient): Patient => {
+  patientData.push(patientEntry);
+  return patientEntry;
 };
 
 export default {

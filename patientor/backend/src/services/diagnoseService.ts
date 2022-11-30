@@ -5,7 +5,7 @@ const getEntries = () : Diagnose[] => {
   return diagnoseData;
 };
 
-const addEntry = () => {
+const addEntry = (): null => {
   return null;
 };
 

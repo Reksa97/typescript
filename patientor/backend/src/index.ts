@@ -7,7 +7,6 @@ import { toNewPatientEntry } from './utils';
 const app = express();
 
 app.use(express.json());
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(cors());
 
 const PORT = 3001;
@@ -28,12 +27,12 @@ app.get('/api/patients', (_req, res) => {
 app.post('/api/patients', (req, res) => {
   try {
     const newPatientEntry = toNewPatientEntry(req.body);
-      
     const addedEntry = patientService.addEntry(newPatientEntry);
     res.json(addedEntry);
   } catch (e) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    res.status(400).send(e.message); 
+    let message = 'Unknown Error';
+    if (e instanceof Error) message = e.message;
+    res.status(400).send(message); 
   }
 });
   
