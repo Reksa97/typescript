@@ -24,6 +24,15 @@ app.get('/api/patients', (_req, res) => {
   res.json(patientService.getEntries());
 });
 
+app.get('/api/patients/:id', (req, res) => {
+  const patient = patientService.getEntry(req.params.id);
+  if (!patient) {
+    res.status(404).send('No patient found');
+    return;
+  }
+  res.json(patient);
+});
+
 app.post('/api/patients', (req, res) => {
   try {
     const newPatientEntry = toNewPatientEntry(req.body);
