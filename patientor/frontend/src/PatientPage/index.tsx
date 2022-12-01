@@ -38,6 +38,7 @@ const PatientPage = () => {
         </Box>
       </div>
     );
+  const patientEntries = patient.entries ?? [];
   return (
     <div className="App">
       <Box>
@@ -51,6 +52,24 @@ const PatientPage = () => {
           <br />
           occupation: {patient.occupation}
         </p>
+        <h2>Entries</h2>
+        {patientEntries.length > 0 ? (
+          patientEntries.map((e) => (
+            <div key={e.id}>
+              <p>
+                {e.date} {e.description}
+              </p>
+              <ul>
+                {e.diagnosisCodes?.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        ) : (
+          <p>No entries found for patient</p>
+        )}
+        <p></p>
       </Box>
     </div>
   );
