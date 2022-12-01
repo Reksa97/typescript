@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import diagnoseService from './services/diagnoseService';
+import diagnosisService from './services/diagnosisService';
 import patientService from './services/patientService';
 import { toNewPatientEntry } from './utils';
 
@@ -17,7 +17,7 @@ app.get('/api/ping', (_req, res) => {
 });
 
 app.get('/api/diagnoses', (_req, res) => {
-  res.json(diagnoseService.getEntries());
+  res.json(diagnosisService.getEntries());
 });
 
 app.get('/api/patients', (_req, res) => {

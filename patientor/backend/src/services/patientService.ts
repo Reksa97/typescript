@@ -1,10 +1,8 @@
-import patientData from '../../data/patients.json';
-import { Gender, Patient, PatientPublicData } from '../types';
-
-const patients: Patient[] = patientData.map(p => ({...p, gender: p.gender as Gender}));
+import patientData from '../../data/patients';
+import { Patient, PatientPublicData } from '../types';
 
 const getEntries = () : PatientPublicData[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+  return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
     dateOfBirth,
@@ -13,10 +11,10 @@ const getEntries = () : PatientPublicData[] => {
   }));
 };
 
-const getEntry = (id: string) : Patient | undefined => patients.find(p => p.id === id);
+const getEntry = (id: string) : Patient | undefined => patientData.find(p => p.id === id);
 
 const addEntry = (patientEntry: Patient): Patient => {
-  patients.push(patientEntry);
+  patientData.push(patientEntry);
   return patientEntry;
 };
 
