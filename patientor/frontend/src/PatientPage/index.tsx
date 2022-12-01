@@ -1,6 +1,6 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Button, Typography } from "@material-ui/core";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiBaseUrl } from "../constants";
 import { setDiagnoses, setPatient, useStateValue } from "../state";
@@ -22,6 +22,8 @@ import MoodIcon from "@mui/icons-material/Mood";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
+import AddEntryModal from "../AddEntryModal";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 /**
  * Helper function for exhaustive type checking
@@ -154,6 +156,37 @@ const PatientPage = () => {
   const [{ patients, diagnoses }, dispatch] = useStateValue();
   const { id } = useParams();
   const patient = id && patients[id];
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+  const openModal = (): void => setModalOpen(true);
+
+  const submitNewEntry = async (values: EntryFormValues) => {
+    if (!id) return;
+    try {
+      const { data: newPatient } = await axios.post<Patient>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      dispatch(setPatient(newPatient));
+      closeModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(
+          String(e?.response?.data?.error) || "Unrecognized axios error"
+        );
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
+
   useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
 
@@ -206,6 +239,12 @@ const PatientPage = () => {
           occupation: {patient.occupation}
         </p>
         <h2>Entries</h2>
+        <div style={{ paddingBottom: 8 }}>
+          <Button variant="contained" onClick={() => openModal()}>
+            Add New Entry
+          </Button>
+        </div>
+
         {patientEntries.length > 0 ? (
           patientEntries.map((e) => <EntryDetails key={e.id} entry={e} />)
         ) : (
@@ -213,6 +252,12 @@ const PatientPage = () => {
         )}
         <p></p>
       </Box>
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
     </div>
   );
 };
