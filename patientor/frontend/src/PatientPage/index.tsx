@@ -17,6 +17,7 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import MoodIcon from "@mui/icons-material/Mood";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
@@ -119,10 +120,13 @@ const OccupationalHealthcareDetails = ({
     <div style={detailsStyle}>
       <div style={detailsContentStyle}>
         <p style={detailsHeaderStyle}>
-          {entry.date} <LocalHospitalIcon style={iconStyle} />
+          {entry.date} <AssuredWorkloadIcon style={iconStyle} />
         </p>
         <p>
           <i>{entry.description}</i>
+          <br />
+          {entry.sickLeave &&
+            `Sick leave from '${entry.sickLeave.startDate}' to '${entry.sickLeave.endDate}'`}
         </p>
         <p>Diagnose by {entry.specialist}</p>
         {entry.diagnosisCodes && (

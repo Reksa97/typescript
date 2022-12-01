@@ -15,7 +15,7 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
-interface BaseEntry {
+export interface BaseEntry {
     id: string;
     description: string;
     date: string;
