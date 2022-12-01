@@ -3,20 +3,31 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { apiBaseUrl } from "../constants";
-import { setPatient, useStateValue } from "../state";
-import { Patient } from "../types";
+import { setDiagnoses, setPatient, useStateValue } from "../state";
+import { Diagnosis, Patient } from "../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 
 const PatientPage = () => {
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnoses }, dispatch] = useStateValue();
   const { id } = useParams();
   const patient = id && patients[id];
   useEffect(() => {
-    if (!id || patients[id]?.ssn) return;
     void axios.get<void>(`${apiBaseUrl}/ping`);
 
-    const fetchPatient = async () => {
+    const fetchDiagnoses = async () => {
+      try {
+        const { data: diagnoses } = await axios.get<Diagnosis[]>(
+          `${apiBaseUrl}/diagnoses`
+        );
+        dispatch(setDiagnoses(diagnoses));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (!diagnoses) void fetchDiagnoses();
+
+    const fetchPatient = async (id: string) => {
       try {
         const { data: patient } = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`
@@ -26,7 +37,7 @@ const PatientPage = () => {
         console.error(error);
       }
     };
-    void fetchPatient();
+    if (id && !patients[id]?.ssn) void fetchPatient(id);
   }, [dispatch]);
   if (!patient)
     return (
@@ -60,9 +71,19 @@ const PatientPage = () => {
                 {e.date} {e.description}
               </p>
               <ul>
-                {e.diagnosisCodes?.map((c) => (
-                  <li key={c}>{c}</li>
-                ))}
+                {e.diagnosisCodes?.map((c) => {
+                  const diagnosis = diagnoses?.find((d) => d.code === c);
+                  return (
+                    <li key={c}>
+                      {c}{" "}
+                      {diagnosis && (
+                        <>
+                          {diagnosis.name} <i>{diagnosis.latin}</i>
+                        </>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))
