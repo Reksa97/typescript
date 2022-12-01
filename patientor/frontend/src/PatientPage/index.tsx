@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@material-ui/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { cloneDeep } from "lodash";
 import { apiBaseUrl } from "../constants";
 import { setDiagnoses, setPatient, useStateValue } from "../state";
 import {
@@ -12,6 +13,7 @@ import {
   HealthCheckEntry,
   OccupationalHealthcareEntry,
   HealthCheckRating,
+  EntryFormValues,
 } from "../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
@@ -23,7 +25,6 @@ import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
 import AddEntryModal from "../AddEntryModal";
-import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 /**
  * Helper function for exhaustive type checking
@@ -167,8 +168,12 @@ const PatientPage = () => {
   };
   const openModal = (): void => setModalOpen(true);
 
-  const submitNewEntry = async (values: EntryFormValues) => {
+  const submitNewEntry = async (originalValues: EntryFormValues) => {
     if (!id) return;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const values = cloneDeep(originalValues);
+    if (values.sickLeave?.startDate === "" || values.sickLeave?.endDate === "")
+      values.sickLeave = undefined;
     try {
       const { data: newPatient } = await axios.post<Patient>(
         `${apiBaseUrl}/patients/${id}/entries`,

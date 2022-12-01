@@ -25,6 +25,24 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
+export interface EntryFormValues {
+  type: "Hospital" | "OccupationalHealthcare" | "HealthCheck";
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes: Array<Diagnosis['code']>;
+  discharge: {
+    date: string;
+    criteria: string;
+  }
+  employerName: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  }
+  healthCheckRating: HealthCheckRating;
+}
+
 interface BaseEntry {
   id: string;
   description: string;

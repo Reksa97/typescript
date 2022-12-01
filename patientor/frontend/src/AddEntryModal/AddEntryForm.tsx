@@ -6,11 +6,10 @@ import {
   SelectField,
   TypeOption,
   DiagnosisSelection,
+  HealthCheckRatingOption,
 } from "./FormField";
-import { OccupationalHealthcareEntry } from "../types";
+import { EntryFormValues, HealthCheckRating } from "../types";
 import { useStateValue } from "../state";
-
-export type EntryFormValues = Omit<OccupationalHealthcareEntry, "id">;
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
@@ -21,6 +20,13 @@ const typeOptions: TypeOption[] = [
   { value: "OccupationalHealthcare", label: "Occupational Healthcare" },
   { value: "HealthCheck", label: "Health Check" },
   { value: "Hospital", label: "Hospital" },
+];
+
+const healthCheckRatingOptions: HealthCheckRatingOption[] = [
+  { value: HealthCheckRating.Healthy, label: "Healthy" },
+  { value: HealthCheckRating.LowRisk, label: "Low Risk" },
+  { value: HealthCheckRating.HighRisk, label: "High Risk" },
+  { value: HealthCheckRating.CriticalRisk, label: "Critical Risk" },
 ];
 
 export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
@@ -34,7 +40,15 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         type: "OccupationalHealthcare",
         diagnosisCodes: [],
         employerName: "",
-        sickLeave: undefined,
+        sickLeave: {
+          startDate: "",
+          endDate: "",
+        },
+        discharge: {
+          date: "",
+          criteria: "",
+        },
+        healthCheckRating: HealthCheckRating.Healthy,
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -52,13 +66,23 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.type) {
           errors.type = requiredError;
         }
-        if (!values.employerName) {
-          errors.employerName = requiredError;
+        if (values.type === "OccupationalHealthcare") {
+          if (!values.employerName) {
+            errors.employerName = requiredError;
+          }
         }
+        if (values.type === "HealthCheck") {
+          if (
+            !Object.values(HealthCheckRating).includes(values.healthCheckRating)
+          ) {
+            errors.healthCheckRating = requiredError;
+          }
+        }
+
         return errors;
       }}
     >
-      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched, values }) => {
         return (
           <Form className="form ui">
             <SelectField label="Type" name="type" options={typeOptions} />
@@ -85,24 +109,36 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               name="specialist"
               component={TextField}
             />
-            <Field
-              label="Employer"
-              placeholder="Employer"
-              name="employerName"
-              component={TextField}
-            />
-            <Field
-              label="Sick leave start"
-              placeholder="Sick leave start"
-              name="sickLeave.startDate"
-              component={TextField}
-            />
-            <Field
-              label="Sick leave end"
-              placeholder="Sick leave end"
-              name="sickLeave.endDate"
-              component={TextField}
-            />
+            {values.type === "OccupationalHealthcare" && (
+              <>
+                <Field
+                  label="Employer"
+                  placeholder="Employer"
+                  name="employerName"
+                  component={TextField}
+                />
+                <Field
+                  label="Sick leave start"
+                  placeholder="Sick leave start"
+                  name="sickLeave.startDate"
+                  component={TextField}
+                />
+                <Field
+                  label="Sick leave end"
+                  placeholder="Sick leave end"
+                  name="sickLeave.endDate"
+                  component={TextField}
+                />
+              </>
+            )}
+            {values.type === "HealthCheck" && (
+              <SelectField
+                label="Health check rating"
+                name="healthCheckRating"
+                options={healthCheckRatingOptions}
+              />
+            )}
+
             <Grid>
               <Grid item>
                 <Button

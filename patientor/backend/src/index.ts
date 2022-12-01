@@ -11,7 +11,7 @@ app.use(cors());
 
 const PORT = 3001;
 
-app.get('/api/ping', (_req, res) => { 
+app.get('/api/ping', (_req, res) => {
   console.log('someone pinged here');
   res.send('pong');
 });
@@ -35,7 +35,6 @@ app.get('/api/patients/:id', (req, res) => {
 
 app.post('/api/patients/:id/entries', (req, res) => {
   try {
-    console.log(req.body);
     const newPatientEntryEntry = toNewPatientEntryEntry(req.body);
     const patient = patientService.addEntryForPatient(req.params.id, newPatientEntryEntry);
     if (!patient) {
