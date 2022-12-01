@@ -1,9 +1,14 @@
-import React from "react";
 import { Grid, Button } from "@material-ui/core";
 import { Field, Formik, Form } from "formik";
 
-import { TextField, SelectField, TypeOption } from "./FormField";
+import {
+  TextField,
+  SelectField,
+  TypeOption,
+  DiagnosisSelection,
+} from "./FormField";
 import { OccupationalHealthcareEntry } from "../types";
+import { useStateValue } from "../state";
 
 export type EntryFormValues = Omit<OccupationalHealthcareEntry, "id">;
 
@@ -19,6 +24,7 @@ const typeOptions: TypeOption[] = [
 ];
 
 export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
+  const [{ diagnoses }] = useStateValue();
   return (
     <Formik
       initialValues={{
@@ -28,10 +34,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         type: "OccupationalHealthcare",
         diagnosisCodes: [],
         employerName: "",
-        sickLeave: {
-          startDate: "",
-          endDate: "",
-        },
+        sickLeave: undefined,
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -55,7 +58,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         return errors;
       }}
     >
-      {({ isValid, dirty }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
             <SelectField label="Type" name="type" options={typeOptions} />
@@ -64,6 +67,11 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               placeholder="Date"
               name="date"
               component={TextField}
+            />
+            <DiagnosisSelection
+              setFieldValue={setFieldValue}
+              setFieldTouched={setFieldTouched}
+              diagnoses={diagnoses ? Object.values(diagnoses) : []}
             />
             <Field
               label="Description"

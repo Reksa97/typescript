@@ -42,10 +42,12 @@ const DiagnosisCodes = ({ codes }: { codes: string[] }) => {
         const diagnosis = diagnoses?.find((d) => d.code === c);
         return (
           <li key={c}>
-            {c}{" "}
+            <b>{c}</b>
             {diagnosis && (
               <>
-                {diagnosis.name} <i>{diagnosis.latin}</i>
+                <br />
+                {diagnosis.name} <br />
+                <i>{diagnosis.latin}</i>
               </>
             )}
           </li>
