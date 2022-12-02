@@ -78,7 +78,14 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
             errors.healthCheckRating = requiredError;
           }
         }
-
+        if (values.type === "Hospital") {
+          if (!values.discharge.date) {
+            errors["discharge.date"] = requiredError;
+          }
+          if (!values.discharge.criteria) {
+            errors["discharge.criteria"] = requiredError;
+          }
+        }
         return errors;
       }}
     >
@@ -137,6 +144,22 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                 name="healthCheckRating"
                 options={healthCheckRatingOptions}
               />
+            )}
+            {values.type === "Hospital" && (
+              <>
+                <Field
+                  label="Discharge date"
+                  placeholder="Date"
+                  name="discharge.date"
+                  component={TextField}
+                />
+                <Field
+                  label="Discharge criteria"
+                  placeholder="Criteria"
+                  name="discharge.criteria"
+                  component={TextField}
+                />
+              </>
             )}
 
             <Grid>
